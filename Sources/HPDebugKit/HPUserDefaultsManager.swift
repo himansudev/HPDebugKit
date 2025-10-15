@@ -8,8 +8,8 @@
 import Foundation
 
 /// A comprehensive UserDefaults manager for saving and fetching data
-public final class HPUserDefaultsManager {
-    public static let shared = HPUserDefaultsManager()
+internal final class HPUserDefaultsManager {
+    static let shared = HPUserDefaultsManager()
     
     private let userDefaults = UserDefaults.standard
     
@@ -17,27 +17,29 @@ public final class HPUserDefaultsManager {
 }
 
 // MARK: - UserDefaults Keys
-public enum HPUserDefaultsKey: String, CaseIterable {
+enum HPUserDefaultsKey: String, CaseIterable {
     // Example keys - replace with your actual keys
-    case userID = "user_id"
-    case isLoggedIn = "is_logged_in"
-    case lastSyncDate = "last_sync_date"
-    case userPreferences = "user_preferences"
-    case appTheme = "app_theme"
-    case notificationsEnabled = "notifications_enabled"
-    case language = "app_language"
-    case debugMode = "debug_mode"
-    case lastAppVersion = "last_app_version"
-    case onboardingCompleted = "onboarding_completed"
+//    case userID = "user_id"
+//    case isLoggedIn = "is_logged_in"
+//    case lastSyncDate = "last_sync_date"
+//    case userPreferences = "user_preferences"
+//    case appTheme = "app_theme"
+//    case notificationsEnabled = "notifications_enabled"
+//    case language = "app_language"
+//    case debugMode = "debug_mode"
+//    case lastAppVersion = "last_app_version"
+//    case onboardingCompleted = "onboarding_completed"
+    
+    case localServerEnabled = "is_local_server_enabled"
     
     // You can also organize keys by creating nested enums:
-    // public enum User: String, CaseIterable {
+    // enum User: String, CaseIterable {
     //     case id = "user_id"
     //     case name = "user_name"
     //     case email = "user_email"
     // }
     // 
-    // public enum Settings: String, CaseIterable {
+    // enum Settings: String, CaseIterable {
     //     case theme = "app_theme"
     //     case notifications = "notifications_enabled"
     //     case language = "app_language"
@@ -53,7 +55,7 @@ extension HPUserDefaultsManager {
     ///   - key: The enum key to associate with the value
     /// - Returns: True if successful, false otherwise
     @discardableResult
-    public func save<T>(_ value: T, forKey key: HPUserDefaultsKey) -> Bool {
+    func save<T>(_ value: T, forKey key: HPUserDefaultsKey) -> Bool {
         userDefaults.set(value, forKey: key.rawValue)
         return userDefaults.synchronize()
     }
@@ -63,7 +65,7 @@ extension HPUserDefaultsManager {
     ///   - type: The type to cast the value to
     ///   - key: The enum key to fetch the value for
     /// - Returns: The value cast to the specified type, or nil if not found or wrong type
-    public func fetch<T>(_ type: T.Type, forKey key: HPUserDefaultsKey) -> T? {
+    func fetch<T>(_ type: T.Type, forKey key: HPUserDefaultsKey) -> T? {
         return userDefaults.object(forKey: key.rawValue) as? T
     }
     
@@ -73,7 +75,7 @@ extension HPUserDefaultsManager {
     ///   - key: The enum key to fetch the value for
     ///   - defaultValue: The default value to return if not found or wrong type
     /// - Returns: The value cast to the specified type or the default value
-    public func fetch<T>(_ type: T.Type, forKey key: HPUserDefaultsKey, defaultValue: T) -> T {
+    func fetch<T>(_ type: T.Type, forKey key: HPUserDefaultsKey, defaultValue: T) -> T {
         return fetch(type, forKey: key) ?? defaultValue
     }
     
@@ -82,7 +84,7 @@ extension HPUserDefaultsManager {
     /// Fetches a String value from UserDefaults (uses optimized UserDefaults.string method)
     /// - Parameter key: The enum key to fetch the value for
     /// - Returns: The string value, or nil if not found
-    public func fetchString(forKey key: HPUserDefaultsKey) -> String? {
+    func fetchString(forKey key: HPUserDefaultsKey) -> String? {
         return userDefaults.string(forKey: key.rawValue)
     }
     
@@ -91,28 +93,28 @@ extension HPUserDefaultsManager {
     ///   - key: The enum key to fetch the value for
     ///   - defaultValue: The default value to return if not found
     /// - Returns: The string value or the default value
-    public func fetchString(forKey key: HPUserDefaultsKey, defaultValue: String) -> String {
+    func fetchString(forKey key: HPUserDefaultsKey, defaultValue: String) -> String {
         return userDefaults.string(forKey: key.rawValue) ?? defaultValue
     }
     
     /// Fetches Data from UserDefaults (uses optimized UserDefaults.data method)
     /// - Parameter key: The enum key to fetch the value for
     /// - Returns: The data, or nil if not found
-    public func fetchData(forKey key: HPUserDefaultsKey) -> Data? {
+    func fetchData(forKey key: HPUserDefaultsKey) -> Data? {
         return userDefaults.data(forKey: key.rawValue)
     }
     
     /// Fetches an Array from UserDefaults (uses optimized UserDefaults.array method)
     /// - Parameter key: The enum key to fetch the value for
     /// - Returns: The array, or nil if not found
-    public func fetchArray(forKey key: HPUserDefaultsKey) -> [Any]? {
+    func fetchArray(forKey key: HPUserDefaultsKey) -> [Any]? {
         return userDefaults.array(forKey: key.rawValue)
     }
     
     /// Fetches a Dictionary from UserDefaults (uses optimized UserDefaults.dictionary method)
     /// - Parameter key: The enum key to fetch the value for
     /// - Returns: The dictionary, or nil if not found
-    public func fetchDictionary(forKey key: HPUserDefaultsKey) -> [String: Any]? {
+    func fetchDictionary(forKey key: HPUserDefaultsKey) -> [String: Any]? {
         return userDefaults.dictionary(forKey: key.rawValue)
     }
 }
@@ -126,7 +128,7 @@ extension HPUserDefaultsManager {
     ///   - key: The enum key to associate with the value
     /// - Returns: True if successful, false otherwise
     @discardableResult
-    public func saveCodable<T: Codable>(_ object: T, forKey key: HPUserDefaultsKey) -> Bool {
+    func saveCodable<T: Codable>(_ object: T, forKey key: HPUserDefaultsKey) -> Bool {
         do {
             let data = try JSONEncoder().encode(object)
             return save(data, forKey: key)
@@ -141,7 +143,7 @@ extension HPUserDefaultsManager {
     ///   - type: The type of the Codable object to fetch
     ///   - key: The enum key to fetch the value for
     /// - Returns: The decoded object, or nil if not found or failed to decode
-    public func fetchCodable<T: Codable>(_ type: T.Type, forKey key: HPUserDefaultsKey) -> T? {
+    func fetchCodable<T: Codable>(_ type: T.Type, forKey key: HPUserDefaultsKey) -> T? {
         guard let data = fetchData(forKey: key) else {
             return nil
         }
@@ -160,7 +162,7 @@ extension HPUserDefaultsManager {
     ///   - key: The enum key to fetch the value for
     ///   - defaultValue: The default value to return if not found or failed to decode
     /// - Returns: The decoded object or the default value
-    public func fetchCodable<T: Codable>(_ type: T.Type, forKey key: HPUserDefaultsKey, defaultValue: T) -> T {
+    func fetchCodable<T: Codable>(_ type: T.Type, forKey key: HPUserDefaultsKey, defaultValue: T) -> T {
         return fetchCodable(type, forKey: key) ?? defaultValue
     }
 }
@@ -172,7 +174,7 @@ extension HPUserDefaultsManager {
     /// - Parameter values: Dictionary of enum key-value pairs to save
     /// - Returns: True if all values were saved successfully, false otherwise
     @discardableResult
-    public func saveMultiple(_ values: [HPUserDefaultsKey: Any]) -> Bool {
+    func saveMultiple(_ values: [HPUserDefaultsKey: Any]) -> Bool {
         for (key, value) in values {
             userDefaults.set(value, forKey: key.rawValue)
         }
@@ -183,7 +185,7 @@ extension HPUserDefaultsManager {
     /// Fetches multiple values from UserDefaults
     /// - Parameter keys: Array of enum keys to fetch
     /// - Returns: Dictionary of fetched key-value pairs
-    public func fetchMultiple(forKeys keys: [HPUserDefaultsKey]) -> [HPUserDefaultsKey: Any] {
+    func fetchMultiple(forKeys keys: [HPUserDefaultsKey]) -> [HPUserDefaultsKey: Any] {
         var result: [HPUserDefaultsKey: Any] = [:]
         
         for key in keys {
@@ -199,7 +201,7 @@ extension HPUserDefaultsManager {
     /// - Parameter keys: Array of enum keys to remove
     /// - Returns: True if all keys were removed successfully, false otherwise
     @discardableResult
-    public func removeMultiple(forKeys keys: [HPUserDefaultsKey]) -> Bool {
+    func removeMultiple(forKeys keys: [HPUserDefaultsKey]) -> Bool {
         for key in keys {
             userDefaults.removeObject(forKey: key.rawValue)
         }
@@ -213,7 +215,7 @@ extension HPUserDefaultsManager {
     /// Checks if a key exists in UserDefaults
     /// - Parameter key: The enum key to check
     /// - Returns: True if the key exists, false otherwise
-    public func keyExists(_ key: HPUserDefaultsKey) -> Bool {
+    func keyExists(_ key: HPUserDefaultsKey) -> Bool {
         return userDefaults.object(forKey: key.rawValue) != nil
     }
     
@@ -221,7 +223,7 @@ extension HPUserDefaultsManager {
     /// - Parameter key: The enum key to remove
     /// - Returns: True if successful, false otherwise
     @discardableResult
-    public func remove(forKey key: HPUserDefaultsKey) -> Bool {
+    func remove(forKey key: HPUserDefaultsKey) -> Bool {
         userDefaults.removeObject(forKey: key.rawValue)
         return userDefaults.synchronize()
     }
@@ -229,7 +231,7 @@ extension HPUserDefaultsManager {
     /// Clears all UserDefaults data
     /// - Returns: True if successful, false otherwise
     @discardableResult
-    public func clearAll() -> Bool {
+    func clearAll() -> Bool {
         let domain = Bundle.main.bundleIdentifier ?? "default"
         userDefaults.removePersistentDomain(forName: domain)
         return userDefaults.synchronize()
@@ -237,19 +239,19 @@ extension HPUserDefaultsManager {
     
     /// Gets all keys currently stored in UserDefaults
     /// - Returns: Array of all keys as strings
-    public func getAllKeys() -> [String] {
+    func getAllKeys() -> [String] {
         return Array(userDefaults.dictionaryRepresentation().keys)
     }
     
     /// Gets all key-value pairs currently stored in UserDefaults
     /// - Returns: Dictionary of all key-value pairs
-    public func getAllValues() -> [String: Any] {
+    func getAllValues() -> [String: Any] {
         return userDefaults.dictionaryRepresentation()
     }
     
     /// Gets all enum keys that are currently stored in UserDefaults
     /// - Returns: Array of enum keys that exist in UserDefaults
-    public func getAllEnumKeys() -> [HPUserDefaultsKey] {
+    func getAllEnumKeys() -> [HPUserDefaultsKey] {
         let allKeys = getAllKeys()
         return HPUserDefaultsKey.allCases.filter { key in
             allKeys.contains(key.rawValue)
@@ -259,7 +261,7 @@ extension HPUserDefaultsManager {
     /// Synchronizes UserDefaults to disk
     /// - Returns: True if successful, false otherwise
     @discardableResult
-    public func synchronize() -> Bool {
+    func synchronize() -> Bool {
         return userDefaults.synchronize()
     }
 }
@@ -268,7 +270,7 @@ extension HPUserDefaultsManager {
 extension HPUserDefaultsManager {
     
     /// Prints all stored UserDefaults data for debugging
-    public func printAllData() {
+    func printAllData() {
         let allData = getAllValues()
         print("HPUserDefaultsManager: All stored data:")
         for (key, value) in allData {
@@ -278,7 +280,7 @@ extension HPUserDefaultsManager {
     
     /// Prints UserDefaults data for specific enum keys
     /// - Parameter keys: Array of enum keys to print
-    public func printData(forKeys keys: [HPUserDefaultsKey]) {
+    func printData(forKeys keys: [HPUserDefaultsKey]) {
         print("HPUserDefaultsManager: Data for specified keys:")
         for key in keys {
             if let value = userDefaults.object(forKey: key.rawValue) {
@@ -290,7 +292,7 @@ extension HPUserDefaultsManager {
     }
     
     /// Prints all enum keys and their values for debugging
-    public func printEnumKeysData() {
+    func printEnumKeysData() {
         print("HPUserDefaultsManager: Data for enum keys:")
         for key in HPUserDefaultsKey.allCases {
             if let value = userDefaults.object(forKey: key.rawValue) {

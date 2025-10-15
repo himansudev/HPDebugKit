@@ -7,13 +7,13 @@
 
 import Foundation
 
-public enum HPDirectory {
+enum HPDirectory {
     case documents
     case cache
     case temporary
     case applicationSupport
     
-    public var url: URL {
+    var url: URL {
         switch self {
         case .documents:
             return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -26,13 +26,13 @@ public enum HPDirectory {
         }
     }
     
-    public var path: String {
+    var path: String {
         return url.path
     }
 }
 
-public final class HPFileManager {
-    public static let shared = HPFileManager()
+final class HPFileManager {
+    static let shared = HPFileManager()
     
     private let fileManager = FileManager.default
     
@@ -46,7 +46,7 @@ extension HPFileManager {
 //    /// - Parameter directory: The HPDirectory enum case
 //    /// - Returns: True if successful, false otherwise
 //    @discardableResult
-//    public func createDirectory(_ directory: HPDirectory) -> Bool {
+//    func createDirectory(_ directory: HPDirectory) -> Bool {
 //        let url = directory.url
 //        
 //        do {
@@ -62,7 +62,7 @@ extension HPFileManager {
 //    /// - Parameter url: The directory URL
 //    /// - Returns: True if successful, false otherwise
 //    @discardableResult
-//    public func createDirectory(at url: URL) -> Bool {
+//    func createDirectory(at url: URL) -> Bool {
 //        do {
 //            try fileManager.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
 //            return true
@@ -78,7 +78,7 @@ extension HPFileManager {
     ///   - baseURL: The base URL where the directory should be created
     /// - Returns: True if successful, false otherwise
     @discardableResult
-    public func createDirectory(named directoryName: String, in baseURL: URL) -> Bool {
+    func createDirectory(named directoryName: String, in baseURL: URL) -> Bool {
         let targetURL = baseURL.appendingPathComponent(directoryName)
         
         do {
@@ -97,14 +97,14 @@ extension HPFileManager {
     /// Checks if a file or directory exists at the specified URL
     /// - Parameter url: The file or directory URL
     /// - Returns: True if exists, false otherwise
-    public func itemExists(at url: URL) -> Bool {
+    func itemExists(at url: URL) -> Bool {
         return fileManager.fileExists(atPath: url.path)
     }
     
     /// Checks if a file exists at the specified URL
     /// - Parameter url: The file URL
     /// - Returns: True if file exists, false otherwise
-    public func fileExists(at url: URL) -> Bool {
+    func fileExists(at url: URL) -> Bool {
         var isDirectory: ObjCBool = false
         let exists = fileManager.fileExists(atPath: url.path, isDirectory: &isDirectory)
         return exists && !isDirectory.boolValue
@@ -113,7 +113,7 @@ extension HPFileManager {
     /// Checks if a directory exists at the specified URL
     /// - Parameter url: The directory URL
     /// - Returns: True if directory exists, false otherwise
-    public func directoryExists(at url: URL) -> Bool {
+    func directoryExists(at url: URL) -> Bool {
         var isDirectory: ObjCBool = false
         let exists = fileManager.fileExists(atPath: url.path, isDirectory: &isDirectory)
         return exists && isDirectory.boolValue
@@ -126,7 +126,7 @@ extension HPFileManager {
     /// Lists the contents of a directory at the specified URL
     /// - Parameter url: The directory URL
     /// - Returns: Array of file names, or empty array if failed
-    public func contentsOfDirectory(at url: URL) -> [String] {
+    func contentsOfDirectory(at url: URL) -> [String] {
         do {
             return try fileManager.contentsOfDirectory(atPath: url.path)
         } catch {
@@ -143,7 +143,7 @@ extension HPFileManager {
     /// - Parameter url: The file or directory URL
     /// - Returns: True if successful, false otherwise
     @discardableResult
-    public func removeItem(at url: URL) -> Bool {
+    func removeItem(at url: URL) -> Bool {
         do {
             try fileManager.removeItem(at: url)
             return true
@@ -159,7 +159,7 @@ extension HPFileManager {
     ///   - destinationURL: The destination URL
     /// - Returns: True if successful, false otherwise
     @discardableResult
-    public func copyItem(from sourceURL: URL, to destinationURL: URL) -> Bool {
+    func copyItem(from sourceURL: URL, to destinationURL: URL) -> Bool {
         do {
             try fileManager.copyItem(at: sourceURL, to: destinationURL)
             return true
@@ -175,7 +175,7 @@ extension HPFileManager {
     ///   - destinationURL: The destination URL
     /// - Returns: True if successful, false otherwise
     @discardableResult
-    public func moveItem(from sourceURL: URL, to destinationURL: URL) -> Bool {
+    func moveItem(from sourceURL: URL, to destinationURL: URL) -> Bool {
         do {
             try fileManager.moveItem(at: sourceURL, to: destinationURL)
             return true
@@ -197,7 +197,7 @@ extension HPFileManager {
     ///   - url: The file URL where to write the JSON
     /// - Returns: True if successful, false otherwise
     @discardableResult
-    public func writeJSON(_ dictionary: [String: Any], to url: URL) -> Bool {
+    func writeJSON(_ dictionary: [String: Any], to url: URL) -> Bool {
         do {
             let jsonData = try JSONSerialization.data(withJSONObject: dictionary, options: [.prettyPrinted, .sortedKeys])
             try jsonData.write(to: url)
@@ -214,7 +214,7 @@ extension HPFileManager {
     ///   - url: The file URL where to write the JSON
     /// - Returns: True if successful, false otherwise
     @discardableResult
-    public func writeJSON<T: Codable>(_ codable: T, to url: URL) -> Bool {
+    func writeJSON<T: Codable>(_ codable: T, to url: URL) -> Bool {
         do {
             let encoder = JSONEncoder()
             encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
@@ -233,7 +233,7 @@ extension HPFileManager {
     ///   - url: The file URL where to write the JSON
     /// - Returns: True if successful, false otherwise
     @discardableResult
-    public func writeJSON(_ data: Data, to url: URL) -> Bool {
+    func writeJSON(_ data: Data, to url: URL) -> Bool {
         do {
             try data.write(to: url)
             return true
@@ -249,7 +249,7 @@ extension HPFileManager {
     ///   - url: The file URL where to write the JSON
     /// - Returns: True if successful, false otherwise
     @discardableResult
-    public func writeJSONPretty(_ data: Data, to url: URL) -> Bool {
+    func writeJSONPretty(_ data: Data, to url: URL) -> Bool {
         do {
             // Parse the JSON data back to an object
             let jsonObject = try JSONSerialization.jsonObject(with: data, options: [])
@@ -272,7 +272,7 @@ extension HPFileManager {
     ///   - url: The file URL where to write the text
     /// - Returns: True if successful, false otherwise
     @discardableResult
-    public func writeText(_ text: String, to url: URL) -> Bool {
+    func writeText(_ text: String, to url: URL) -> Bool {
         do {
             try text.write(to: url, atomically: true, encoding: .utf8)
             return true
@@ -288,7 +288,7 @@ extension HPFileManager {
     ///   - url: The file URL where to write the text
     /// - Returns: True if successful, false otherwise
     @discardableResult
-    public func writeText(_ data: Data, to url: URL) -> Bool {
+    func writeText(_ data: Data, to url: URL) -> Bool {
         do {
             try data.write(to: url)
             return true
@@ -306,7 +306,7 @@ extension HPFileManager {
     ///   - url: The file URL where to write the data
     /// - Returns: True if successful, false otherwise
     @discardableResult
-    public func writeData(_ data: Data, to url: URL) -> Bool {
+    func writeData(_ data: Data, to url: URL) -> Bool {
         do {
             try data.write(to: url)
             return true
@@ -322,7 +322,7 @@ extension HPFileManager {
     ///   - url: The file URL where to append the text
     /// - Returns: True if successful, false otherwise
     @discardableResult
-    public func appendText(_ text: String, to url: URL) -> Bool {
+    func appendText(_ text: String, to url: URL) -> Bool {
         do {
             if fileManager.fileExists(atPath: url.path) {
                 let fileHandle = try FileHandle(forWritingTo: url)
@@ -346,7 +346,7 @@ extension HPFileManager {
     /// Gets the size of a file or directory
     /// - Parameter url: The file or directory URL
     /// - Returns: Size in bytes, or nil if failed
-    public func sizeOfItem(at url: URL) -> Int64? {
+    func sizeOfItem(at url: URL) -> Int64? {
         do {
             let attributes = try fileManager.attributesOfItem(atPath: url.path)
             return attributes[.size] as? Int64

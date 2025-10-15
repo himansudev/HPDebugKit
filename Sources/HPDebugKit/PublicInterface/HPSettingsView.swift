@@ -19,16 +19,19 @@ public struct HPSettingsView: View {
     public var body: some View {
         VStack {
             versionView
-            
-            Button("Create Documents Directory") {
-                
-                //                HPFileManager.shared.createDirectory(named: "ABC", in: HPDirectory.documents.url)
-                let documentDir = HPDirectory.documents.url.appendingPathComponent("ABC")
-                let a = HPFileManager.shared.directoryExists(at: documentDir)
-                print("ZZZZ : ",a)
-            }
-            .padding()
+            Text("Local Server : \(localServerEnabled ? "Enabled" : "Disabled")")
         }
+    }
+    
+    
+    private var localServerEnabled: Bool {
+        if let localServerEnabled = HPUserDefaultsManager.shared.fetch(
+            Bool.self,
+            forKey: .localServerEnabled
+        ){
+            return localServerEnabled
+        }
+        return false
     }
     
     @available(iOS 16.0, macOS 10.15, *)
