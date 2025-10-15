@@ -10,8 +10,6 @@ HPDebugKit is designed to make iOS development easier by providing developers wi
 
 ### 🔧 Core Debugging Tools
 - **Version Information**: Easy access to app version, build number, and debug information
-- **File Management**: Comprehensive file and directory operations
-- **Data Persistence**: Type-safe UserDefaults management with enum-based keys
 - **Settings UI**: Built-in SwiftUI interface for package configuration
 
 ### 🌐 Local Server (Coming Soon)
@@ -22,7 +20,7 @@ HPDebugKit is designed to make iOS development easier by providing developers wi
 ### 📱 Developer-Friendly UI
 - **HPSettingsView**: SwiftUI-based settings screen for package configuration
 - **Easy Integration**: Simple to integrate into your existing app
-- **Customizable**: Extensible design for future features
+- **Clean API**: Minimal public interface focused on developer needs
 
 ## Installation
 
@@ -97,63 +95,25 @@ struct ContentView: View {
 
 ## Detailed Usage
 
-### File Management
+### Core API
 
-HPDebugKit provides comprehensive file management capabilities:
-
-```swift
-let fileManager = HPFileManager.shared
-
-// Create directories
-let documentsURL = HPDirectory.documents.url
-fileManager.createDirectory(named: "MyAppData", in: documentsURL)
-
-// Check if files/directories exist
-let exists = fileManager.fileExists(at: someURL)
-let dirExists = fileManager.directoryExists(at: someURL)
-
-// Write data
-let data = "Hello World".data(using: .utf8)!
-fileManager.writeData(data, to: someURL)
-
-// Write JSON
-let jsonData = ["key": "value"]
-fileManager.writeJSON(jsonData, to: someURL)
-```
-
-### UserDefaults Management
-
-Type-safe UserDefaults with enum-based keys:
+HPDebugKit provides a clean, minimal API focused on developer needs:
 
 ```swift
-let userDefaults = HPUserDefaultsManager.shared
+// Get version information
+let debugKit = HPDebugKit.shared
+let version = debugKit.getVersion()
+let fullVersion = debugKit.getFullVersion()
+let buildNumber = debugKit.getBuildNumber()
 
-// Define your keys
-enum MyAppKeys: String, CaseIterable {
-    case userID = "user_id"
-    case isLoggedIn = "is_logged_in"
-    case lastSyncDate = "last_sync_date"
-}
-
-// Save data
-userDefaults.save("john_doe", forKey: .userID)
-userDefaults.save(true, forKey: .isLoggedIn)
-userDefaults.save(Date(), forKey: .lastSyncDate)
-
-// Fetch data with type safety
-let userID: String? = userDefaults.fetch(String.self, forKey: .userID)
-let isLoggedIn: Bool = userDefaults.fetch(Bool.self, forKey: .isLoggedIn, defaultValue: false)
-
-// Save Codable objects
-struct UserPreferences: Codable {
-    let theme: String
-    let notifications: Bool
-}
-
-let preferences = UserPreferences(theme: "dark", notifications: true)
-userDefaults.saveCodable(preferences, forKey: .userPreferences)
-let fetchedPrefs = userDefaults.fetchCodable(UserPreferences.self, forKey: .userPreferences)
+// Get comprehensive debug info
+let debugInfo = debugKit.getDebugInfo()
+print(debugInfo)
 ```
+
+### Internal Implementation
+
+HPDebugKit uses internal utilities for file management and data persistence, but these are not exposed in the public API to keep the interface clean and focused. The package handles all the complexity internally while providing a simple interface for developers.
 
 ### Settings Screen Integration
 
@@ -187,23 +147,13 @@ NavigationLink("Debug Settings") {
 }
 ```
 
-## Available Directories
+## Internal Architecture
 
-HPDebugKit provides easy access to common iOS directories:
+HPDebugKit is built with a clean architecture that separates public API from internal implementation:
 
-```swift
-// Documents directory
-let documentsURL = HPDirectory.documents.url
-
-// Cache directory
-let cacheURL = HPDirectory.cache.url
-
-// Temporary directory
-let tempURL = HPDirectory.temporary.url
-
-// Application Support directory
-let appSupportURL = HPDirectory.applicationSupport.url
-```
+- **Public Interface**: Only `HPDebugKit` and `HPSettingsView` are exposed to host apps
+- **Internal Implementation**: File management, UserDefaults, and other utilities are internal
+- **Future-Ready**: Designed to easily add new features without breaking existing API
 
 ## Debug Information
 
@@ -257,11 +207,11 @@ For questions, issues, or feature requests, please:
 
 ### Version 1.0.0
 - Initial release
-- Core debugging utilities
-- File management system
-- UserDefaults management with enum keys
+- Core debugging utilities with clean public API
+- Internal file management and data persistence systems
 - HPSettingsView SwiftUI interface
 - Version information utilities
+- Local Server foundation (internal)
 
 ---
 

@@ -4,10 +4,10 @@
 
 HPDebugKit is a developer-focused debugging toolkit that makes iOS development easier by providing:
 
-- **🔧 Core Debugging Tools**: Version info, file management, data persistence
+- **🔧 Core Debugging Tools**: Version info and debug information
 - **🌐 Local Server** (Coming Soon): Save server responses and run offline
 - **📱 Settings UI**: Built-in SwiftUI interface for package configuration
-- **⚡ Type Safety**: Enum-based keys prevent typos and improve maintainability
+- **⚡ Clean API**: Minimal public interface focused on developer needs
 
 ## 5-Minute Setup
 
@@ -49,16 +49,12 @@ struct ContentView: View {
 let version = HPDebugKit.shared.getVersion()
 print("HPDebugKit Version: \(version)")
 
-// Test file operations
-let fileManager = HPFileManager.shared
-let documentsURL = HPDirectory.documents.url
-fileManager.createDirectory(named: "TestData", in: documentsURL)
+// Get debug information
+let debugInfo = HPDebugKit.shared.getDebugInfo()
+print("Debug Info: \(debugInfo)")
 
-// Test UserDefaults
-let userDefaults = HPUserDefaultsManager.shared
-userDefaults.save("test_user", forKey: .userID)
-let userID = userDefaults.fetchString(forKey: .userID, defaultValue: "unknown")
-print("User ID: \(userID)")
+// The package handles all internal operations automatically
+// You only need to use the public API
 ```
 
 ## Common Use Cases
@@ -90,62 +86,32 @@ NavigationLink("Debug Settings") {
 }
 ```
 
-### 2. Save App Settings
+### 2. Get Debug Information
 
 ```swift
-// Define your keys
-enum MyAppKeys: String, CaseIterable {
-    case userID = "user_id"
-    case theme = "app_theme"
-    case notifications = "notifications_enabled"
-}
+// Get comprehensive debug info
+let debugKit = HPDebugKit.shared
+let debugInfo = debugKit.getDebugInfo()
 
-// Save settings
-let userDefaults = HPUserDefaultsManager.shared
-userDefaults.save("dark", forKey: .theme)
-userDefaults.save(true, forKey: .notifications)
-
-// Load settings
-let theme = userDefaults.fetchString(forKey: .theme, defaultValue: "light")
-let notifications = userDefaults.fetch(Bool.self, forKey: .notifications, defaultValue: false)
+// Debug info includes:
+// - Package version
+// - Build number
+// - Platform information
+// - Timestamp
+print("Debug Info: \(debugInfo)")
 ```
 
-### 3. File Management
+### 3. Access Settings Programmatically
 
 ```swift
-let fileManager = HPFileManager.shared
+// The HPSettingsView shows current settings
+// You can access debug information programmatically
+let debugKit = HPDebugKit.shared
+let version = debugKit.getVersion()
+let buildNumber = debugKit.getBuildNumber()
 
-// Create app data directory
-let documentsURL = HPDirectory.documents.url
-fileManager.createDirectory(named: "MyAppData", in: documentsURL)
-
-// Save user data
-let userData = ["name": "John", "age": 30]
-let dataURL = documentsURL.appendingPathComponent("MyAppData/user.json")
-fileManager.writeJSON(userData, to: dataURL)
-
-// Check if file exists
-let exists = fileManager.fileExists(at: dataURL)
-print("File exists: \(exists)")
-```
-
-### 4. Save Complex Objects
-
-```swift
-// Define your model
-struct UserProfile: Codable {
-    let name: String
-    let email: String
-    let preferences: [String: Any]
-}
-
-// Save complex object
-let profile = UserProfile(name: "John", email: "john@example.com", preferences: [:])
-let userDefaults = HPUserDefaultsManager.shared
-userDefaults.saveCodable(profile, forKey: .userPreferences)
-
-// Load complex object
-let loadedProfile = userDefaults.fetchCodable(UserProfile.self, forKey: .userPreferences)
+// Use this information for debugging or logging
+print("App Version: \(version) (\(buildNumber))")
 ```
 
 ## Local Server Feature (Coming Soon)
@@ -173,37 +139,17 @@ let cachedData = localServer.getCachedResponse(for: "api/users")
 
 ## Best Practices
 
-### 1. Use Enum Keys
+### 1. Use the Public API Only
 ```swift
-// ✅ Good - Type safe, autocomplete, no typos
-userDefaults.save(value, forKey: .userID)
+// ✅ Good - Use only public interfaces
+let debugKit = HPDebugKit.shared
+let version = debugKit.getVersion()
 
-// ❌ Bad - Prone to typos, no autocomplete
-userDefaults.save(value, forKey: "user_id")
+// ❌ Bad - Don't access internal classes
+// HPFileManager.shared // This is internal
 ```
 
-### 2. Check Return Values
-```swift
-// ✅ Good - Handle failures
-let success = fileManager.createDirectory(named: "Data", in: documentsURL)
-if !success {
-    print("Failed to create directory")
-}
-
-// ❌ Bad - Ignore failures
-fileManager.createDirectory(named: "Data", in: documentsURL)
-```
-
-### 3. Use Specialized Methods
-```swift
-// ✅ Good - Better performance
-let string = userDefaults.fetchString(forKey: .userID)
-
-// ❌ Bad - Less efficient
-let string = userDefaults.fetch(String.self, forKey: .userID)
-```
-
-### 4. Present Settings Properly
+### 2. Present Settings Properly
 ```swift
 // ✅ Good - Proper navigation
 NavigationView {
@@ -220,6 +166,17 @@ NavigationView {
 HPSettingsView()
 ```
 
+### 3. Handle Debug Information Appropriately
+```swift
+// ✅ Good - Use debug info for logging
+let debugInfo = HPDebugKit.shared.getDebugInfo()
+print("Debug Info: \(debugInfo)")
+
+// ✅ Good - Use version info for support
+let version = HPDebugKit.shared.getVersion()
+print("App Version: \(version)")
+```
+
 ## Troubleshooting
 
 ### "Cannot find 'HPSettingsView' in scope"
@@ -229,26 +186,19 @@ HPSettingsView()
 2. Update package dependencies
 3. Make sure you're importing both `HPDebugKit` and `SwiftUI`
 
-### UserDefaults not saving
+### Debug information not showing
 
 **Solution:**
-1. Check if you're using enum keys correctly
-2. Verify the value is UserDefaults-compatible
-3. Check return value of save method
-
-### File operations failing
-
-**Solution:**
-1. Check if directory exists before writing
-2. Verify you have write permissions
-3. Check return values for error handling
+1. Make sure you're calling the correct methods
+2. Check that the package is properly imported
+3. Verify the package is up to date
 
 ## Next Steps
 
 1. **Explore the API**: Check out [API Documentation](API_DOCUMENTATION.md)
 2. **Read Examples**: See [README](README.md) for more examples
-3. **Customize Settings**: Extend `HPSettingsView` for your needs
-4. **Add Your Keys**: Extend `HPUserDefaultsKey` with your app's keys
+3. **Integrate Settings**: Add `HPSettingsView` to your app's debug menu
+4. **Future Features**: Watch for Local Server and other upcoming features
 
 ## Support
 
