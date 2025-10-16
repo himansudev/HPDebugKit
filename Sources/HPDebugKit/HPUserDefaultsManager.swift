@@ -31,6 +31,7 @@ enum HPUserDefaultsKey: String, CaseIterable {
 //    case onboardingCompleted = "onboarding_completed"
     
     case localServerEnabled = "is_local_server_enabled"
+    case saveNetworkCallEnabled = "save_network_call_enabled"
     
     // You can also organize keys by creating nested enums:
     // enum User: String, CaseIterable {

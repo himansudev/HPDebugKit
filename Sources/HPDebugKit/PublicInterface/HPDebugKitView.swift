@@ -1,5 +1,5 @@
 //
-//  HPSettingsView.swift
+//  HPDebugKitView.swift
 //  HPDebugKit
 //
 //  Created by Apple on 15/10/25.
@@ -27,9 +27,10 @@ public struct HPDebugKitView: View {
             .navigationDestination(for: HPFeatureType.self) { feature in
                 switch feature {
                 case .localServer:
-                    LocalServerView()
+                    HPLocalServerView()
                 }
             }
+            .navigationBarHidden(true)
         }
     }
     
@@ -48,9 +49,9 @@ public struct HPDebugKitView: View {
                                 .foregroundColor(.secondary)
                         }
                         Spacer()
-//                        Image(systemName: "chevron.right")
-//                            .foregroundColor(.secondary)
-//                            .font(.caption)
+                        Image(systemName: "chevron.right")
+                            .foregroundColor(.secondary)
+                            .font(.caption)
                     }
                     .padding(.vertical, 4)
                 }
@@ -73,7 +74,7 @@ public struct HPDebugKitView: View {
 #else
 // Fallback for when SwiftUI is not available
 @available(iOS 16.0, macOS 10.15, *)
-public struct HPSettingsView {
+public struct HPDebugKitView {
     public init() {}
 }
 #endif
